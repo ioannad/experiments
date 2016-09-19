@@ -19,59 +19,50 @@
    Function Select 1 (Table 6-3, page 92).
    
    GPIO smallest address : 0x 7E20 0000 |--> 0x 2020 0000
-        function select 1: 0x 7E20 0004 |-->        +0x04
-	pin set 1        : 0x 7E20 0020 |-->        +0x20
-	pin clear 1      : 0x 7E20 002C |-->        +0x2C	
+        function select 1:         0004 
+	pin set 1        :         001C 
+	pin clear 1      :         0028 	
+
+   There are different addresses for SET and CLEAR because (?) 
+   (page 95 of BCM manual):
+   "Separating the set and clear functions removes the need for 
+   read-modify-write operations."
 */
 
 #define GPIO_BASE  0x20200000UL
-
+#define SPEED      500000
 /* volatile registers: */
 
-/* prepare led registers for IO: GPIO Function Select 1 (page 90) */
-volatile unsigned int* led_prep;
-volatile unsigned int* led_clear;
-volatile unsigned int* led_set;
+/* prepare led registers for IO: */
+volatile unsigned int* led_prep;  /* function select 1 */
+volatile unsigned int* led_clear; /* pin clear 1 */
+volatile unsigned int* led_set;   /* pin set 1 */
 
 /* loop variable. Volatile because the loops where it appears do 
    nothing than keep the program from crashing?  */
 volatile unsigned int t;
 
-
-/* Provides necessary _main symbol. */
-
+/* compiler creates no entry/exit code. Registers directly accessed(?):
+*/
+int main(void) __attribute__((naked));
+ 
 int main(void)
 {
-  led_prep  = (unsigned int*)(GPIO_BASE + 4);
-  led_clear = (unsigned int*)(GPIO_BASE + 40); /* = +0x2c */
+  led_prep  = (unsigned int*)(GPIO_BASE + 0x4);
+  led_clear = (unsigned int*)(GPIO_BASE + 0x28);
+  led_set   = (unsigned int*)(GPIO_BASE + 0x1c); 
   
-  /* Set bit 18 of register LED_SELECT to 1. 
-     This will ready the GPIO16 pin for output. */
+  /*  This will ready the GPIO16 pin for output. */
   *led_prep |= (1<<18);
-
-  for(t=0; t<5000; t++)
-	;
   
-  /* To light the LED, output a 0 on bit 16 of the CLEAR 
-     register of GPIO. This is done by setting the 
-     gpio_clear register's 16th bit to 1.*/
   while(1)
     {
-      for(t=0; t; t++)
+      for(t=0; t<SPEED; t++)
 	;
-      *led_clear |= (1<<16);
+      *led_clear |= (1<<16); /* turn on */
       
+      for(t=0; t<SPEED; t++)
+	;
+      *led_set |= (1<<16);  /* turn off */
     }
-  return 0;
-}
-
-/* Provides necessary _exit symbol. Normally a system call when a 
-   program terminates. Not necessary for now, as there are no 
-   programs to be run except this one.  */
-void exit(int code)
-{
-  while(1); /* Important to have an infinite loop: the C library
-               we use is not to be used with an OS (-none-), so 
-	       there `exit` is marked as noreturn. A return would
-	       cause a warning. */
 }
