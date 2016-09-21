@@ -34,9 +34,9 @@
 /* volatile registers: */
 
 /* prepare led registers for IO: */
-volatile unsigned int* led_prep;  /* function select 1 */
-volatile unsigned int* led_clear; /* pin clear 1 */
-volatile unsigned int* led_set;   /* pin set 1 */
+volatile unsigned int* led_prep  = (unsigned int*)(GPIO_BASE + 0x4);  /* function select 1 */
+volatile unsigned int* led_clear = (unsigned int*)(GPIO_BASE + 0x28); /* pin clear 1 */
+volatile unsigned int* led_set = (unsigned int*)(GPIO_BASE + 0x1c);   /* pin set 1 */
 
 /* loop variable. Volatile because the loops where it appears do 
    nothing than keep the program from crashing?  */
@@ -48,11 +48,8 @@ int main(void) __attribute__((naked));
  
 int main(void)
 {
-  led_prep  = (unsigned int*)(GPIO_BASE + 0x4);
-  led_clear = (unsigned int*)(GPIO_BASE + 0x28);
-  led_set   = (unsigned int*)(GPIO_BASE + 0x1c); 
-  
-  /*  This will ready the GPIO16 pin for output. */
+  /*  This will ready for output the pin GPIO16, controlled by the
+      6th set of 3 bits. */
   *led_prep |= (1<<18);
   
   while(1)
