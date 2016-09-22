@@ -31,35 +31,30 @@
 
 #define GPIO_BASE  0x20200000UL
 #define SPEED      500000
-/* volatile registers: */
 
-/* prepare led registers for IO: */
-volatile unsigned int* led_prep  = (unsigned int*)(GPIO_BASE + 0x4);  /* function select 1 */
-volatile unsigned int* led_clear = (unsigned int*)(GPIO_BASE + 0x28); /* pin clear 1 */
-volatile unsigned int* led_set = (unsigned int*)(GPIO_BASE + 0x1c);   /* pin set 1 */
-
-/* loop variable. Volatile because the loops where it appears do 
-   nothing than keep the program from crashing?  */
+volatile unsigned int* gpio = (unsigned int*)GPIO_BASE; /*   */
+  
+/* loop variable. Volatile because any optimisation above -O0 removes the loop where this appears. */
 volatile unsigned int t;
 
-/* compiler creates no entry/exit code. Registers directly accessed(?):
-*/
+/* compiler creates no entry/exit code. */
 int main(void) __attribute__((naked));
  
 int main(void)
 {
   /*  This will ready for output the pin GPIO16, controlled by the
-      6th set of 3 bits. */
-  *led_prep |= (1<<18);
+      6th set of 3 bits, of the 1st (0x4>>2) int-sized-chunk after
+      gpio. */
+  (0x4>>2)[gpio] |= (1<<18);
   
   while(1)
     {
       for(t=0; t<SPEED; t++)
 	;
-      *led_clear |= (1<<16); /* turn on */
+      (0x28>>2)[gpio] |= (1<<16); /* turn on */
       
       for(t=0; t<SPEED; t++)
 	;
-      *led_set |= (1<<16);  /* turn off */
+      (0x1c>>2)[gpio] |= (1<<16);  /* turn off */
     }
 }
