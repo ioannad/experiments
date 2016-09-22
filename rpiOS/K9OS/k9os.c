@@ -29,32 +29,45 @@
    read-modify-write operations."
 */
 
+#include <string.h>
+#include <stdlib.h>
+
 #define GPIO_BASE  0x20200000UL
 #define SPEED      500000
+#define LED_ON()   do { (0x28>>2)[gpio] |= (1<<16); } while( 0 )
+#define LED_OFF()  do { (0x1c>>2)[gpio] |= (1<<16); } while( 0 )
+#define LED_PREP() do {  (0x4>>2)[gpio] |= (1<<18); } while( 0 )
 
-volatile unsigned int* gpio = (unsigned int*)GPIO_BASE; /*   */
-  
-/* loop variable. Volatile because any optimisation above -O0 removes the loop where this appears. */
-volatile unsigned int t;
+volatile unsigned int* gpio = (unsigned int*)GPIO_BASE;
 
-/* compiler creates no entry/exit code. */
-int main(void) __attribute__((naked));
- 
-int main(void)
+void main( unsigned int r0, unsigned int r1, unsigned int atags)
 {
+  int t;
+  unsigned int* counters;
+  
   /*  This will ready for output the pin GPIO16, controlled by the
       6th set of 3 bits, of the 1st (0x4>>2) int-sized-chunk after
       gpio. */
-  (0x4>>2)[gpio] |= (1<<18);
+  LED_PREP(); 
   
+  counters = malloc( 1024 * sizeof( unsigned int));
+
+  if( counters == NULL) /* if memory allocation fails */
+    while(1) { LED_ON(); }
+
+  for(t=0; t<1024; t++)
+    counters[t] = 0;
+
   while(1)
     {
-      for(t=0; t<SPEED; t++)
+      LED_ON();
+
+      for(counters[0] = 0; counters[0] < SPEED; counters[0]++)
 	;
-      (0x28>>2)[gpio] |= (1<<16); /* turn on */
       
-      for(t=0; t<SPEED; t++)
+      LED_OFF();
+
+      for(counters[1] = 0; counters[1] < SPEED; counters[1]++)
 	;
-      (0x1c>>2)[gpio] |= (1<<16);  /* turn off */
     }
 }
