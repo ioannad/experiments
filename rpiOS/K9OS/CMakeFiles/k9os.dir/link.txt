@@ -1,0 +1,1 @@
+/usr/bin/arm-none-eabi-gcc   -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s -O0 -g -nostartfiles    CMakeFiles/k9os.dir/k9os.c.obj CMakeFiles/k9os.dir/k9-cstartup.c.obj CMakeFiles/k9os.dir/k9-cstubs.c.obj CMakeFiles/k9os.dir/k9-start.S.obj  -o k9os  

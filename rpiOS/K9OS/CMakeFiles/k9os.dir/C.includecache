@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/ioa/Documents/code/experiments/rpiOS/K9OS/k9-cstartup.c
+
+/home/ioa/Documents/code/experiments/rpiOS/K9OS/k9-cstubs.c
+sys/stat.h
+-
+
+/home/ioa/Documents/code/experiments/rpiOS/K9OS/k9os.c
+string.h
+-
+stdlib.h
+-
+
