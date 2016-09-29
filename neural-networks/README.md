@@ -12,11 +12,9 @@ The activation algorithm is a simple sign function, and it is learning using sup
 
 ## Installation
 
-Download from https://github.com/ioannad/experiments/tree/master/neural-networks/
+Download from https://github.com/ioannad/experiments/tree/master/neural-networks/neural-networks.tar.gz, decompress and build with `./build.sh`.
 
 ## Usage
-
-Build with `./build.sh`
 
 Run applet with `./perceptron.sh`
 
