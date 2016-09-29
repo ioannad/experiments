@@ -4,7 +4,7 @@
 
 At the moment this produces a quil animation, which shows a single perceptron with three inputs (two coordinates and a bias) learning how to recognise whether a point is above or below a given line. 
 
-A filled dot means the perceptron guess that the point is below the line, and an empty dot means the perceptron guess that the point is above the line. 
+A filled dot means the perceptron guesses that the point is below the line, and an empty dot means the perceptron guesses that the point is above the line. Every time the app starts a new perceptron is generated, with random weights between -1 and 1.
 
 Every 300 points the screen gets refreshed to show the learning process better, and the applet runs for 2000 learning points.
 
